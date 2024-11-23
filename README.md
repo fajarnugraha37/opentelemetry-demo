@@ -13,10 +13,10 @@ Welcome to the OpenTelemetry Demo repository! This project demonstrates how to i
 
 ## Features
 
-- **Distributed Tracing**: Capture and visualize traces across services.
-- **Metrics Collection**: Gather and analyze performance metrics.
-- **Logging Integration**: Integrate logs.
-- **Example Applications**: Sample applications demonstrating OpenTelemetry.
+- **Distributed Tracing**
+- **Metrics Collection**
+- **Logging Integration**
+- **Example Applications**
 
 ## Getting Started
 
