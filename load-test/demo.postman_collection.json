@@ -1,0 +1,86 @@
+{
+    "info": {
+      "name": "Microservices Demo",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Create Order",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost/api/orders",
+            "protocol": "http",
+            "host": ["localhost"],
+            "path": ["api", "orders"]
+          },
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"items\": [\n    {\n      \"id\": \"item1\",\n      \"quantity\": 1\n    }\n  ]\n}"
+          }
+        }
+      },
+      {
+        "name": "Check Inventory",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost/api/inventory/check-inventory",
+            "protocol": "http",
+            "host": ["localhost"],
+            "path": ["api", "inventory", "check-inventory"]
+          },
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"items\": [\n    {\n      \"id\": \"item1\",\n      \"quantity\": 1\n    }\n  ]\n}"
+          }
+        }
+      },
+      {
+        "name": "Process Payment",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost/api/payment/process",
+            "protocol": "http",
+            "host": ["localhost"],
+            "path": ["api", "payment", "process"]
+          },
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"orderId\": \"test-order-1\",\n  \"amount\": 100\n}"
+          }
+        }
+      },
+      {
+        "name": "Health Check",
+        "request": {
+          "method": "GET",
+          "url": {
+            "raw": "http://localhost/health",
+            "protocol": "http",
+            "host": ["localhost"],
+            "path": ["health"]
+          }
+        }
+      }
+    ]
+  }
