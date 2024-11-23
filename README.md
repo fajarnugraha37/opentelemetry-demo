@@ -1,6 +1,6 @@
 # OpenTelemetry Demo
 
-Welcome to the OpenTelemetry Demo repository! This project demonstrates how to implement OpenTelemetry for observability. It showcases various features such as tracing, metrics, and logging.
+Welcome to the OpenTelemetry Demo repository! This project demonstrates how to implement OpenTelemetry for observability using nodejs with honojs. It showcases various features such as tracing, metrics, and logging.
 
 ## Table of Contents
 
@@ -31,13 +31,11 @@ To get started with this demo, follow these steps:
     ```bash
     docker compose up
     ```
-3. 
+3. For usage, there is a postman collection for the api exposed here [demo.postman_collection.json](https://github.com/fajarnugraha37/opentelemetry-demo/blob/main/load-test/demo.postman_collection.json)
+    Or you can use k6 for load testing by using the command below and details of the available tests can be read here [README.md](https://github.com/fajarnugraha37/opentelemetry-demo/blob/main/load-test/k6/README.md):
     ```bash
-    For my use I have created a postman collection for the api exposed here (https://github.com/fajarnugraha37/opentelemetry-demo/blob/main/load-test/demo.postman_collection.json)[demo.postman_collection.json]
-    Or you can use k6 for load testing by using the command below:
     k6 run .\load\k6\index.js 
     ```
-    **NOTE**: details of the available tests can be read here (https://github.com/fajarnugraha37/opentelemetry-demo/blob/main/load-test/k6/README.md)[README.md]
 
 
 ## Contributing
@@ -45,5 +43,6 @@ To get started with this demo, follow these steps:
 Contributions are welcome! Please read our CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests.
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details. For more information on OpenTelemetry, check out the official OpenTelemetry documentation.
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/fajarnugraha37/opentelemetry-demo/blob/main/LICENSE) file for details. For more information on OpenTelemetry, check out [the official OpenTelemetry documentation](https://opentelemetry.io/docs/what-is-opentelemetry/).
 Feel free to modify any sections or add specific details related to your project that may not be covered.
