@@ -64,6 +64,21 @@ services:
       - otel
     logging: *loki-logging
 
+  node-exporter:
+    image: ${NODE_EXPORTER_IMAGE}
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.ignored-mount-points"
+      - "^(aufs|proc|nsfs|shm|cgroup|tmpfs|binfmt_misc|debugfs|devpts|fusectl|hugetlbfs|fuse.lxcfs|mqueue|pstore|securityfs|sysfs|autofs|devtmpfs|configfs)"
+    networks:
+      - otel
+    logging: *loki-logging
+
   grafana:
     image: ${GRAFANA_IMAGE}
     ports:

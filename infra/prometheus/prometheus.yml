@@ -1,19 +1,23 @@
 global:
-  scrape_interval: 15s
+  scrape_interval: 5s
 
 scrape_configs:
   - job_name: 'otel-collector'
     static_configs:
       - targets: ['otel-collector:8889']
+      
+  - job_name: 'node-exporter'
+    static_configs:
+    - targets: ['node-exporter:9100']
 
-  - job_name: 'order_service'
+  - job_name: 'order-service'
     static_configs:
       - targets: ['order:80']
 
-  - job_name: 'inventory_service'
+  - job_name: 'inventory-service'
     static_configs:
       - targets: ['inventory:80']
 
-  - job_name: 'payment_service'
+  - job_name: 'payment-service'
     static_configs:
       - targets: ['payment:80']
