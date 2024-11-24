@@ -61,8 +61,6 @@ services:
     image: ${LOKI_IMAGE}
     ports:
       - "3100:3100"
-    volumes:
-      - loki_data:/loki
     networks:
       - otel
     logging: *loki-logging
@@ -161,9 +159,6 @@ services:
     networks:
       - otel
     logging: *loki-logging
-
-volumes:
-  loki_data:
 
 networks:
   otel:
