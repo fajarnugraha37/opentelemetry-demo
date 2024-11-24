@@ -1,8 +1,6 @@
 import { serve } from '@hono/node-server';
-import { Hono } from 'hono';
-import { initializeTracing, logger, kafka, gracefullShutdown, useMetrics, intializeTopics } from '@demo/shared';
+import { logger, kafka, gracefullShutdown, intializeTopics, createApp } from '@demo/shared';
 
-initializeTracing('inventory-service');
 
 // Dummy inventory
 const inventory: Record<string, number> = {
@@ -11,29 +9,27 @@ const inventory: Record<string, number> = {
   'item3': 75,
 };
 
-const app = useMetrics(new Hono());
+const app = createApp('inventory-service')
+  .post('/api/inventory/check-inventory', async (c) => {
+    const { items } = await c.req.json();
 
-// Update the path to handle the nginx prefix
-app.post('/api/inventory/check-inventory', async (c) => {
-  const { items } = await c.req.json();
+    logger.info({ items }, 'Checking inventory');
 
-  logger.info({ items }, 'Checking inventory');
-
-  for (const item of items) {
-    if (!inventory[item.id] || inventory[item.id] < item.quantity) {
-      logger.error({ item }, 'Insufficient inventory');
-      return c.json({ error: 'Insufficient inventory' }, 400);
+    for (const item of items) {
+      if (!inventory[item.id] || inventory[item.id] < item.quantity) {
+        logger.error({ item }, 'Insufficient inventory');
+        return c.json({ error: 'Insufficient inventory' }, 400);
+      }
     }
-  }
 
-  logger.info('Inventory check successful');
-  return c.json({ status: 'available' });
-});
+    logger.info('Inventory check successful');
+    return c.json({ status: 'available' });
+  });
 
 async function setupConsumer() {
   await intializeTopics();
 
-  const consumer = kafka.consumer({ 
+  const consumer = kafka.consumer({
     groupId: process.env.KAFKA_GROUP_ID!,
   });
   await consumer.connect();

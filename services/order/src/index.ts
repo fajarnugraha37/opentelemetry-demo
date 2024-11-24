@@ -1,22 +1,22 @@
 import { serve } from '@hono/node-server';
-import { Hono } from 'hono';
 import { v4 as uuidv4 } from 'uuid';
-import { initializeTracing, logger, kafka, gracefullShutdown, useMetrics, intializeTopics, serviceEndpoint } from '@demo/shared';
-
-initializeTracing('order-service');
-
-const producer = kafka.producer();
-await producer.connect();
-await intializeTopics();
+import { initializeTracing, logger, kafka, gracefullShutdown, intializeTopics, serviceEndpoint, createApp } from '@demo/shared';
 
 
-const app = useMetrics(new Hono());
+const app = createApp('order-service');
 
-// Update the path to handle the nginx prefix
+const producer = await (async () => {
+  const prod = kafka.producer();
+  await prod.connect();
+  await intializeTopics();
+
+  return prod;
+})();
+
 app.post('/api/orders', async (c) => {
   const orderId = uuidv4();
   const { items } = await c.req.json();
-  
+
   logger.info({ orderId, items }, 'New order received');
 
   // Update service URLs to use internal docker network names
@@ -44,7 +44,7 @@ app.post('/api/orders', async (c) => {
 
   await producer.send({
     topic: 'order-created',
-    messages: [{ 
+    messages: [{
       key: orderId,
       value: JSON.stringify({ orderId, items, status: 'created' })
     }],
@@ -60,10 +60,10 @@ const server = serve({
 }, (addr) => {
   logger.info(`Order Service  listening at ${addr.address}:${addr.port}`);
   gracefullShutdown(async (signal) => {
-      logger.info(`received ${signal} signl`);
-      server.close(err => err && logger.error('failed to stop server due to ', err));
-      server.unref();
+    logger.info(`received ${signal} signl`);
+    server.close(err => err && logger.error('failed to stop server due to ', err));
+    server.unref();
 
-      producer.disconnect();
+    producer.disconnect();
   });
 });

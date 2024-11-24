@@ -23,15 +23,19 @@ export async function intializeTopics() {
   try {
     await admin.connect();
     for (const iterator of topics) {
-      const [topic, numPartitions] = iterator.split(':');
-      await admin.createTopics({
-        topics: [
-          {
-            topic: topic,
-            numPartitions: +(numPartitions || 1),
-          }
-        ],
-      });
+      try {
+        const [topic, numPartitions] = iterator.split(':');
+        await admin.createTopics({
+          topics: [
+            {
+              topic: topic,
+              numPartitions: +(numPartitions || 1),
+            }
+          ],
+        });
+      } catch (e) {
+        logger.error(e, `Failed to crete topic for '${iterator}'`)
+      }
     }
 
     logger.debug('Succed to create kafka topics');
