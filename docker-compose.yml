@@ -1,5 +1,10 @@
 version: '3.8'
 
+x-logging: &loki-logging
+  driver: json-file
+  options:
+    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
 services:
   kafka:
     image: ${KAFKA_IMAGE}
@@ -13,6 +18,9 @@ services:
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_PROCESS_ROLES: 'broker,controller'
+    networks:
+      - otel
+    logging: *loki-logging
 
   otel-collector:
     image: ${OTEL_COLLECTOR_IMAGE}
@@ -26,6 +34,9 @@ services:
     depends_on:
       - jaeger
       - prometheus
+    networks:
+      - otel
+    logging: *loki-logging
 
   prometheus:
     image: ${PROMETHEUS_IMAGE}
@@ -33,12 +44,18 @@ services:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    networks:
+      - otel
+    logging: *loki-logging
 
   jaeger:
     image: ${JAEGER_IMAGE}
     ports:
       - "16686:16686"
       - "14250:14250"
+    networks:
+      - otel
+    logging: *loki-logging
 
   loki:
     image: ${LOKI_IMAGE}
@@ -46,13 +63,21 @@ services:
       - "3100:3100"
     volumes:
       - loki_data:/loki
+    networks:
+      - otel
+    logging: *loki-logging
 
   promtail:
     image: ${PROMTAIL_IMAGE}
     volumes:
       - ./infra/promtail/promtail-config.yml:/etc/promtail/config.yml
-      - ./log:/var/log
+      - /var/lib/docker/containers:/host/containers
     command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - otel
+    logging: *loki-logging
 
   grafana:
     image: ${GRAFANA_IMAGE}
@@ -65,12 +90,14 @@ services:
       - prometheus
       - loki
       - jaeger
+    networks:
+      - otel
+    logging: *loki-logging
 
   order:
     build: 
       context: .
       dockerfile: services/order/Dockerfile
-    restart: always
     expose:
       - "80"
     env_file: "./.env.service"
@@ -81,13 +108,14 @@ services:
     depends_on:
       - kafka
       - otel-collector
-      - loki
+    networks:
+      - otel
+    logging: *loki-logging
 
   inventory:
     build:
       context: .
       dockerfile: services/inventory/Dockerfile
-    restart: always
     expose:
       - "80"
     env_file: "./.env.service"
@@ -98,13 +126,14 @@ services:
     depends_on:
       - kafka
       - otel-collector
-      - loki
+    networks:
+      - otel
+    logging: *loki-logging
 
   payment:
     build:
       context: .
       dockerfile: services/payment/Dockerfile
-    restart: always
     expose:
       - "80"
     env_file: "./.env.service"
@@ -115,7 +144,9 @@ services:
     depends_on:
       - kafka
       - otel-collector
-      - loki
+    networks:
+      - otel
+    logging: *loki-logging
 
   nginx:
     image: ${NGINX_IMAGE}
@@ -123,11 +154,16 @@ services:
       - "80:80"
     volumes:
       - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./log:/var/log
     depends_on:
       - order
       - inventory
       - payment
+    networks:
+      - otel
+    logging: *loki-logging
 
 volumes:
   loki_data:
+
+networks:
+  otel:

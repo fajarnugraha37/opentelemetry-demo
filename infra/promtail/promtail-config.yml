@@ -9,22 +9,35 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-  - job_name: nginx
+  - job_name: docker
     static_configs:
       - targets:
           - localhost
         labels:
-          job: nginx
-          service_name: nginx
-          __path__: /var/log/access.log
+          job: dockerlogs
+          __path__: /host/containers/*/*log
     pipeline_stages:
       - json:
           expressions:
-            time_local: time_local
-            remote_addr: remote_addr
-            request: request
-            status: status
-            body_bytes_sent: body_bytes_sent
-            request_time: request_time
-            http_referrer: http_referrer
-            http_user_agent: http_user_agent
+            output: log
+            stream: stream
+            attrs:
+      - json:
+          expressions:
+            tag:
+          source: attrs
+      - regex:
+          expression: (?P<image_name>(?:[^|]*[^|])).(?P<container_name>(?:[^|]*[^|])).(?P<image_id>(?:[^|]*[^|])).(?P<container_id>(?:[^|]*[^|]))
+          source: tag
+      - timestamp:
+          format: RFC3339Nano
+          source: time
+      - labels:
+          tag:
+          stream:
+          image_name:
+          container_name:
+          image_id:
+          container_id:
+      - output:
+          source: output
