@@ -7,6 +7,7 @@ Welcome to the OpenTelemetry Demo repository! This project demonstrates how to i
 - [OpenTelemetry Demo](#opentelemetry-demo)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
+  - [Hosts](#hosts)
   - [Getting Started](#getting-started)
   - [Contributing](#contributing)
   - [License](#license)
@@ -17,6 +18,11 @@ Welcome to the OpenTelemetry Demo repository! This project demonstrates how to i
 - **Metrics Collection**
 - **Logging Integration**
 - **Example Applications**
+
+## Hosts
+- **Services**: localhost:80
+- **Grafana**: localhost:3000
+- **Jaeger**: localhost:16686
 
 ## Getting Started
 

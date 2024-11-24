@@ -1,25 +1,13 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { v4 as uuidv4 } from 'uuid';
-import { initializeTracing, logger, kafka, gracefullShutdown, useMetrics } from '@demo/shared';
+import { initializeTracing, logger, kafka, gracefullShutdown, useMetrics, intializeTopics, serviceEndpoint } from '@demo/shared';
 
 initializeTracing('order-service');
 
 const producer = kafka.producer();
 await producer.connect();
-await (async () => {
-  const admin = kafka.admin();
-  await admin.connect();
-  await admin.createTopics({
-    topics: [
-      {
-        topic: 'order-created',
-        numPartitions: 1,
-      }
-    ]
-  });
-  await admin.disconnect();
-})();
+await intializeTopics();
 
 
 const app = useMetrics(new Hono());
@@ -32,7 +20,7 @@ app.post('/api/orders', async (c) => {
   logger.info({ orderId, items }, 'New order received');
 
   // Update service URLs to use internal docker network names
-  const inventoryResponse = await fetch('http://inventory/api/inventory/check-inventory', {
+  const inventoryResponse = await fetch(`${serviceEndpoint.inventory}/api/inventory/check-inventory`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ items }),
@@ -43,7 +31,7 @@ app.post('/api/orders', async (c) => {
     return c.json({ error: 'Inventory check failed' }, 400);
   }
 
-  const paymentResponse = await fetch('http://payment/api/payment/process', {
+  const paymentResponse = await fetch(`${serviceEndpoint.payment}/api/payment/process`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ orderId, amount: 100 }), // Dummy amount

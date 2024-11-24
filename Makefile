@@ -1,16 +1,16 @@
 dbuild:
-	- docker image rm otel-demo/$(service):latest 
+	- docker image rm otel-$(service):latest 
 	docker build \
 		--no-cache \
 		--progress=plain \
-		-t otel-demo/$(service) \
+		-t otel-$(service) \
 		-f services/$(service)/Dockerfile .
 
 drun:
 	docker run -it --rm \
 		-p $(port):$(port) \
 		--env-file .env.service \
-		otel-demo/$(service)
+		otel-$(service)
 
 dcleanup:
 	- docker container rm otel-nginx-1
@@ -24,13 +24,9 @@ dcleanup:
 	- docker container rm otel-jaeger-1
 	- docker container rm otel-prometheus-1
 	- docker container rm otel-promtail-1
-	- docker image rm otel-demo/payment:latest
-	- docker image rm otel-demo/order:latest
-	- docker image rm otel-demo/inventory:latest
 	- docker image rm otel-payment:latest
 	- docker image rm otel-order:latest
 	- docker image rm otel-inventory:latest
-	- docker volume prune
 	- docker volume rm otel_loki_data
 	- docker volume rm otel_nginx_logs
 

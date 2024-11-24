@@ -15,7 +15,8 @@ scrape_configs:
           - localhost
         labels:
           job: nginx
-          __path__: /var/log/nginx/access.log
+          service_name: nginx
+          __path__: /var/log/access.log
     pipeline_stages:
       - json:
           expressions:

@@ -4,7 +4,7 @@ import type { LokiOptions } from 'pino-loki';
 
 export const logger = pino.default(
   {
-    level: 'debug',
+    level: (process.env.LOKI_LOG_LEVEL || 'info'),
     name: process.env.SERVICE_NAME || 'default',
   }, 
   pino.transport<LokiOptions>({
@@ -15,8 +15,8 @@ export const logger = pino.default(
       },
       propsToLabels: ['level', 'pid'],
       batching: true,
-      interval: 15,
-      host: 'http://loki:3100',
+      interval: +(process.env.LOKI_LOG_INTERVAL || '15'),
+      host: process.env.HTTP_LOKI_ENDPOINT!,
     },
   }),
 );

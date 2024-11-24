@@ -1,23 +1,8 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
-import { initializeTracing, logger, kafka, gracefullShutdown, useMetrics } from '@demo/shared';
+import { initializeTracing, logger, kafka, gracefullShutdown, useMetrics, intializeTopics } from '@demo/shared';
 
 initializeTracing('inventory-service');
-
-const consumer = kafka.consumer({ groupId: 'inventory-service' });
-await (async () => {
-  const admin = kafka.admin();
-  await admin.connect();
-  await admin.createTopics({
-    topics: [
-      {
-        topic: 'order-created',
-        numPartitions: 1,
-      }
-    ]
-  });
-  await admin.disconnect();
-})();
 
 // Dummy inventory
 const inventory: Record<string, number> = {
@@ -31,7 +16,7 @@ const app = useMetrics(new Hono());
 // Update the path to handle the nginx prefix
 app.post('/api/inventory/check-inventory', async (c) => {
   const { items } = await c.req.json();
-  
+
   logger.info({ items }, 'Checking inventory');
 
   for (const item of items) {
@@ -46,6 +31,11 @@ app.post('/api/inventory/check-inventory', async (c) => {
 });
 
 async function setupConsumer() {
+  await intializeTopics();
+
+  const consumer = kafka.consumer({ 
+    groupId: process.env.KAFKA_GROUP_ID!,
+  });
   await consumer.connect();
   await consumer.subscribe({ topic: 'order-created' });
 
@@ -71,7 +61,5 @@ const server = serve({
     logger.info(`received ${signal} signl`);
     server.close(err => err && logger.error('failed to stop server due to ', err));
     server.unref();
-    
-    consumer.disconnect();
   });
 });

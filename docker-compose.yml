@@ -2,27 +2,20 @@ version: '3.8'
 
 services:
   kafka:
-    image: confluentinc/cp-kafka:7.7.1
+    image: ${KAFKA_IMAGE}
     ports:
       - "9092:9092"
       - "9093:9093"
+    env_file: "./.env.infra"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT'
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
-      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_PROCESS_ROLES: 'broker,controller'
-      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
-      CLUSTER_ID: 'my-kafka-cluster'
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.114.0
+    image: ${OTEL_COLLECTOR_IMAGE}
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
       - ./infra/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
@@ -35,39 +28,37 @@ services:
       - prometheus
 
   prometheus:
-    image: prom/prometheus:v2.21.0
+    image: ${PROMETHEUS_IMAGE}
     volumes:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
 
   jaeger:
-    image: jaegertracing/all-in-one:1.63.0
+    image: ${JAEGER_IMAGE}
     ports:
       - "16686:16686"
       - "14250:14250"
 
   loki:
-    image: grafana/loki:3.3.0
+    image: ${LOKI_IMAGE}
     ports:
       - "3100:3100"
     volumes:
       - loki_data:/loki
 
   promtail:
-    image: grafana/promtail:3.3.0
+    image: ${PROMTAIL_IMAGE}
     volumes:
       - ./infra/promtail/promtail-config.yml:/etc/promtail/config.yml
-      - nginx_logs:/var/log/nginx
+      - ./log:/var/log
     command: -config.file=/etc/promtail/config.yml
 
   grafana:
-    image: grafana/grafana:11.1.0
+    image: ${GRAFANA_IMAGE}
     ports:
       - "3000:3000"
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    env_file: "./.env.infra"
     volumes:
       - ./infra/grafana/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
     depends_on:
@@ -82,9 +73,11 @@ services:
     restart: always
     expose:
       - "80"
+    env_file: "./.env.service"
     environment:
-      - NODE_ENV=production
       - SERVICE_NAME=order-service
+      - KAFKA_CLIENT_ID=order-service-client
+      - KAFKA_GROUP_ID=order-service-group
     depends_on:
       - kafka
       - otel-collector
@@ -97,9 +90,11 @@ services:
     restart: always
     expose:
       - "80"
+    env_file: "./.env.service"
     environment:
-      - NODE_ENV=production
       - SERVICE_NAME=inventory-service
+      - KAFKA_CLIENT_ID=inventory-service-client
+      - KAFKA_GROUP_ID=inventory-service-group
     depends_on:
       - kafka
       - otel-collector
@@ -112,26 +107,27 @@ services:
     restart: always
     expose:
       - "80"
+    env_file: "./.env.service"
     environment:
-      - NODE_ENV=production
       - SERVICE_NAME=payment-service
+      - KAFKA_CLIENT_ID=payment-service-client
+      - KAFKA_GROUP_ID=payment-service-group
     depends_on:
       - kafka
       - otel-collector
       - loki
 
   nginx:
-    image: nginx:1.25.2-alpine-slim
+    image: ${NGINX_IMAGE}
     ports:
       - "80:80"
     volumes:
       - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - nginx_logs:/var/log/nginx
+      - ./log:/var/log
     depends_on:
       - order
       - inventory
       - payment
 
 volumes:
-  nginx_logs:
   loki_data:

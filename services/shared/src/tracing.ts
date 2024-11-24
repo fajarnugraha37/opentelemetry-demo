@@ -23,12 +23,12 @@ export function initializeTracing(serviceName: string) {
     }),
 
     traceExporter: new OTLPTraceExporter({
-      url: 'http://otel-collector:4318/v1/traces',
+      url: `http://${process.env.HTTP_OTEL_COLLECTOR_HOST!}/v1/traces`,
     }),
     
     metricReader: new PeriodicExportingMetricReader({
       exporter: new OTLPMetricExporter({
-        url: 'http://otel-collector:4318/v1/metrics',
+        url: `http://${process.env.HTTP_OTEL_COLLECTOR_HOST!}/v1/metrics`,
       }),
     }),
     
