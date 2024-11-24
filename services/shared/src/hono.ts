@@ -23,7 +23,12 @@ export const createApp = (appName: string) => {
     }));
     app.use('*', timeout(60_00));
 
-    const { printMetrics, registerMetrics } = prometheus();
+    const { printMetrics, registerMetrics } = prometheus({
+        collectDefaultMetrics: {
+            gcDurationBuckets: [ 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.45, 0.60, 0.75, 0.9, 1, 1.5, 1.75, 2 ],
+            eventLoopMonitoringPrecision: 10,
+        },
+    });
 
     return app
         .use('*', registerMetrics)
