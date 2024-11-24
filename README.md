@@ -20,9 +20,9 @@ Welcome to the OpenTelemetry Demo repository! This project demonstrates how to i
 - **Example Applications**
 
 ## Hosts
-- **Services**: localhost:80
-- **Grafana**: localhost:3000
-- **Jaeger**: localhost:16686
+- **Services**: http://localhost:80
+- **Grafana**: http://localhost:3000
+- **Jaeger**: http://localhost:16686
 
 ## Getting Started
 
