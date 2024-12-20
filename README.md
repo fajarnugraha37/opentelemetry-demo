@@ -14,10 +14,22 @@ Welcome to the OpenTelemetry Demo repository! This project demonstrates how to i
 
 ## Features
 
-- **Distributed Tracing**
-- **Metrics Collection**
-- **Logging Integration**
-- **Example Applications**
+- **Distributed Tracing** :
+  <picture>
+    <img height="500" alt="grafana tracing" src="https://raw.githubusercontent.com/fajarnugraha37/opentelemetry-demo/refs/heads/main/docs/traces.png">
+  </picture>
+- **Metrics Collection** :
+  <picture>
+    <img height="500" alt="grafana metrics" src="https://raw.githubusercontent.com/fajarnugraha37/opentelemetry-demo/refs/heads/main/docs/metrics.png">
+  </picture>
+- **Logging Integration** :
+  <picture>
+    <img height="500" alt="grafana logging" src="https://raw.githubusercontent.com/fajarnugraha37/opentelemetry-demo/refs/heads/main/docs/logs.png">
+  </picture>
+- **Load Testing** :
+  <picture>
+    <img height="500" alt="k6 load testing" src="https://raw.githubusercontent.com/fajarnugraha37/opentelemetry-demo/refs/heads/main/docs/load-testing.png">
+  </picture>
 
 ## Hosts
 - **Services**: http://localhost:80
