@@ -1,4 +1,4 @@
-import { NodeSDK, tracing, logs } from '@opentelemetry/sdk-node';
+import { NodeSDK } from '@opentelemetry/sdk-node';
 import { Resource } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
@@ -30,7 +30,7 @@ export function initializeTracing(serviceName: string) {
       exporter: new OTLPMetricExporter({
         url: `http://${process.env.HTTP_OTEL_COLLECTOR_HOST!}/v1/metrics`,
       }),
-    }),
+    }) as any,
     
     instrumentations: [
       getNodeAutoInstrumentations(),

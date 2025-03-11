@@ -78,6 +78,27 @@ services:
     networks:
       - otel
     logging: *loki-logging
+    
+  cadvisor:
+    image: ${CADVISOR_IMAGE}
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /cgroup:/cgroup:ro
+    expose:
+      - 8080
+    networks:
+      - otel
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    logging: *loki-logging
 
   grafana:
     image: ${GRAFANA_IMAGE}
