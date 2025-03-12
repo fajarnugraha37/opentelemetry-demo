@@ -11,6 +11,7 @@ import * as api from '@opentelemetry/api';
 import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks';
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 import { logger } from './logger.js';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 
 export const contextManager = new AsyncHooksContextManager();
 contextManager.enable();
@@ -34,6 +35,8 @@ export function initializeTracing(serviceName: string) {
     
     instrumentations: [
       getNodeAutoInstrumentations(),
+      new HttpInstrumentation(),
+
       new KafkaJsInstrumentation({
         enabled: true,
         consumerHook: (span, topic, message: Message) => {
