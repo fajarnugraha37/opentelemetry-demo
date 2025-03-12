@@ -99,7 +99,7 @@ services:
         limits:
           memory: 100M
     logging: *loki-logging
-    
+
   grafana:
     image: ${GRAFANA_IMAGE}
     ports:

@@ -1,3 +1,4 @@
 node_modules
 .vscode
 log/*.log
+k8s/docker-compose.temp.yaml
