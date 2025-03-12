@@ -24,6 +24,8 @@ dcleanup:
 	- docker container rm opentelemetry-demo-jaeger-1
 	- docker container rm opentelemetry-demo-prometheus-1
 	- docker container rm opentelemetry-demo-promtail-1
+	- docker container rm  opentelemetry-demo-node-exporter-1
+	- docker container rm  opentelemetry-demo-cadvisor-1
 	- docker image rm opentelemetry-demo-payment:latest
 	- docker image rm opentelemetry-demo-order:latest
 	- docker image rm opentelemetry-demo-inventory:latest
@@ -43,8 +45,10 @@ ninstall.dev:
 	npm install -D $(deps) --workspace=services/$(service)
 
 up:
+	npm run build --workspace=services/shared
 	docker compose up --force-recreate -V
 
 down:
 	docker compose down
 	make dcleanup
+	docker volume prune
