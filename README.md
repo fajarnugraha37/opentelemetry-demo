@@ -47,7 +47,7 @@ To get started with this demo, follow these steps:
    ```
 2. To run the demo application, execute the following command:
     ```bash
-    docker compose up
+    make up
     ```
 3. For usage, there is a postman collection for the api exposed here [demo.postman_collection.json](https://github.com/fajarnugraha37/opentelemetry-demo/blob/main/load-test/demo.postman_collection.json)
     Or you can use k6 for load testing by using the command below and details of the available tests can be read here [README.md](https://github.com/fajarnugraha37/opentelemetry-demo/blob/main/load-test/k6/README.md):
