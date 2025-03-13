@@ -1,6 +1,6 @@
 # OpenTelemetry Demo
 
-Welcome to the OpenTelemetry Demo repository! This project demonstrates how to implement OpenTelemetry for observability using nodejs with honojs. It showcases various features such as tracing, metrics, and logging.
+Welcome to the OpenTelemetry Demo repository! This project demonstrates how to implement OpenTelemetry for observability.
 
 ## Table of Contents
 
@@ -14,15 +14,15 @@ Welcome to the OpenTelemetry Demo repository! This project demonstrates how to i
 
 ## Features
 
-- **Distributed Tracing** :
+- **Tracing** :
   <picture>
     <img height="500" alt="grafana tracing" src="https://raw.githubusercontent.com/fajarnugraha37/opentelemetry-demo/refs/heads/main/docs/traces.png">
   </picture>
-- **Metrics Collection** :
+- **Metric** :
   <picture>
     <img height="500" alt="grafana metrics" src="https://raw.githubusercontent.com/fajarnugraha37/opentelemetry-demo/refs/heads/main/docs/metrics.png">
   </picture>
-- **Logging Integration** :
+- **Logging** :
   <picture>
     <img height="500" alt="grafana logging" src="https://raw.githubusercontent.com/fajarnugraha37/opentelemetry-demo/refs/heads/main/docs/logs.png">
   </picture>
