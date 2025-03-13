@@ -23,6 +23,9 @@ scrape_configs:
       - targets: ['payment:80']
       
   - job_name: 'cadvisor'
-    scrape_interval: 5s
     static_configs:
     - targets: ['cadvisor:8080']
+
+  - job_name: 'kafka-exporter'
+    static_configs:
+    - targets: ['kafka-exporter:9308']
