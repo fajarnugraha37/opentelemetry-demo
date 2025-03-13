@@ -135,6 +135,18 @@ services:
       - otel
     logging: *loki-logging
 
+  kafka-exporter:
+    image: ${KAFKA_EXPORTER_IMAGE}
+    command: ["--kafka.server=kafka:9092"]
+    ports:
+      - 9308:9308   
+    depends_on:
+      - kafka
+      - otel-collector
+    networks:
+      - otel
+    logging: *loki-logging
+
   nginx:
     image: ${NGINX_IMAGE}
     ports:

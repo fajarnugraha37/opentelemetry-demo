@@ -52,3 +52,35 @@ down:
 	docker compose down
 	make dcleanup
 	docker volume prune
+
+stop:
+	- docker container stop opentelemetry-demo-inventory-1
+	- docker container stop opentelemetry-demo-order-1
+	- docker container stop opentelemetry-demo-payment-1
+	- docker container stop opentelemetry-demo-prometheus-1
+	- docker container stop opentelemetry-demo-promtail-1
+	- docker container stop opentelemetry-demo-otel-collector-1
+	- docker container stop opentelemetry-demo-loki-1
+	- docker container stop opentelemetry-demo-kafka-exporter-1
+	- docker container stop opentelemetry-demo-node-exporter-1
+	- docker container stop opentelemetry-demo-cadvisor-1
+	- docker container stop opentelemetry-demo-grafana-1
+	- docker container stop opentelemetry-demo-jaeger-1
+	- docker container stop opentelemetry-demo-kafka-1
+	- docker container stop opentelemetry-demo-nginx-1
+	
+start:
+	- docker container start opentelemetry-demo-nginx-1
+	- docker container start opentelemetry-demo-kafka-1
+	- docker container start opentelemetry-demo-jaeger-1
+	- docker container start opentelemetry-demo-grafana-1
+	- docker container start opentelemetry-demo-cadvisor-1
+	- docker container start opentelemetry-demo-node-exporter-1
+	- docker container start opentelemetry-demo-kafka-exporter-1
+	- docker container start opentelemetry-demo-loki-1
+	- docker container start opentelemetry-demo-otel-collector-1
+	- docker container start opentelemetry-demo-promtail-1
+	- docker container start opentelemetry-demo-prometheus-1
+	- docker container start opentelemetry-demo-payment-1
+	- docker container start opentelemetry-demo-order-1
+	- docker container start opentelemetry-demo-inventory-1
